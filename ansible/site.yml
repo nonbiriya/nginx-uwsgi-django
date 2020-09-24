@@ -1,3 +1,3 @@
 - import_playbook : pyenv/installPyenv.yml
 - import_playbook : nginx/installNginx.yml
-- import_playbook : npm/installNpm.yml
+- import_playbook : django/setupDjango.yml
