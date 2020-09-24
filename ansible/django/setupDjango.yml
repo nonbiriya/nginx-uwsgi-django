@@ -1,0 +1,32 @@
+- hosts: localhost
+  tasks:
+    - name : install mysqlclinent
+      yum :
+        name: '{{item.name}}'
+        state: latest
+      become: yes
+      with_items:
+        - name: https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
+        - name: python-devel
+        - name: mysql-community-client
+        - name: mysql-devel 
+    
+    - name : pip install -r requirements.txt
+      pip:
+        requirements: /home/ec2-user/backend/requirements.txt
+
+    - name : mkdir sites-enabled
+      become: yes
+      file : path=/etc/nginx/sites-enabled/ state=directory owner=ec2-user group=ec2-user mode=0755
+
+    - name : makelink app_nginx.cong
+      become: yes
+      file : src=/home/ec2-user/backend/thesaurus_nginx.conf dest=/etc/nginx/sites-enabled/thesaurus_nginx.conf state=link
+
+    - name: copy nginx.conf
+      become: yes
+      copy: src=/home/ec2-user/ansible/django/nginx.conf dest=/etc/nginx/nginx.conf owner=root group=root mode=644
+
+    - name: restart nginx
+      become: yes
+      service: name=nginx state=restarted
